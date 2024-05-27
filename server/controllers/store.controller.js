@@ -2,12 +2,12 @@ const Store = require('../models/store.model');
 
 const addStore = async (req, res) => {
     try {
-        const { name, location, phone_number } = req.body;
+        const { name, location, phone_number, rating } = req.body;
         const existingStore = await Store.findOne({ name });
         if (existingStore) {
             return res.status(400).json({ message: "Store already exists" });
         }
-        const store = new Store({ name, location, phone_number });
+        const store = new Store({ name, location, phone_number , rating });
         await store.save();
         res.status(201).json(store);
     }
