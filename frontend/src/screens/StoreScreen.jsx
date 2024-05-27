@@ -1,50 +1,69 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; 
-import Icon from 'react-native-vector-icons/Ionicons';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const StoreScreen = () => {
+
+function StoreScreen() {
   const navigation = useNavigation();
-  const [stores, setStores] = useState([]);
+  const mockStores = [
+    {
+      id: '1',
+      name: 'Nhà hàng ABC',
+      image: require('../assets/images/store-image.jpg'),
+      rating: 4.5,
+      deliveryTime: 30,
+      // Các thông tin khác như phí giao hàng, khuyến mãi (nếu có)
+    },
+    {
+      id: '2',
+      name: 'Quán Ăn XYZ',
+      image: require('../assets/images/store-image.jpg'),
+      rating: 4.2,
+      deliveryTime: 45,
+      // ...
+    },
+    // ...Thêm các nhà hàng khác vào đây
+  ];
+  const [stores, setStores] = useState(mockStores); // Dữ liệu nhà hàng (lấy từ API)
 
   useEffect(() => {
-    // Gọi API hoặc lấy dữ liệu cửa hàng từ nguồn khác
-    // Ví dụ: fetch('https://api.example.com/stores')
-    //        .then(res => res.json())
-    //        .then(data => setStores(data));
-    setStores([
-      { id: 1, name: 'Cửa Hàng Vật Tư Nông Nghiệp M&T', image: 'https://example.com/store1.jpg' },
-      { id: 2, name: 'Shop Hường hàng Nhật', image: 'https://example.com/store2.jpg' },
-      { id: 3, name: 'ATI', image: 'https://example.com/store3.jpg' },
-      { id: 4, name: 'Hương Giang Shop 111', image: 'https://example.com/store4.jpg' },
-      { id: 5, name: 'HẢI HÀ MART', image: 'https://example.com/store5.jpg' },
-    ]); // Dữ liệu mẫu
+    // Fetch store data from your API here
   }, []);
 
-  const renderItem = ({ item }) => (
+  const handleStorePress = async (storeid) => {
+    navigation.navigate('Món ăn', { store: storeid })
+    console.log('test')
+  };
+
+  const renderStoreItem = ({ item }) => (
     <TouchableOpacity 
-      style={styles.storeItem}
-      onPress={() => navigation.navigate('StoreDetails', { storeId: item.id })}
-    >
-      <Image source={{ uri: item.image }} style={styles.storeImage} />
+      onPress={() => handleStorePress(item.id)}
+      style={styles.storeItem}>
+      <Image
+        source={item.image} // Sử dụng item.image trực tiếp
+        style={styles.storeImage}
+      />
       <View style={styles.storeInfo}>
         <Text style={styles.storeName}>{item.name}</Text>
-        {/* Hiển thị thông tin khác của cửa hàng */}
+        <Text style={styles.storeRating}>★ {item.rating}</Text>
+        <Text style={styles.deliveryTime}>{item.deliveryTime} phút</Text>
+        {/* Hiển thị phí giao hàng và khuyến mãi nếu có */}
       </View>
-      <Icon name="chevron-forward-outline" size={24} color="#888" />
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
+      {/* Header với SearchBar và FilterButton */}
       <FlatList
         data={stores}
-        keyExtractor={item => item.id.toString()}
-        renderItem={renderItem}
+        renderItem={renderStoreItem}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
-};
+}
+
 
 const styles = StyleSheet.create({
   container: {
@@ -54,7 +73,15 @@ const styles = StyleSheet.create({
   storeItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 16, // Khoảng cách giữa các mục
+    padding: 8, // Khoảng đệm bên trong mỗi mục (tùy chọn)
+    backgroundColor: 'white', // Thêm nền trắng để làm nổi bật
+    borderRadius: 8, // Bo tròn các góc (tùy chọn)
+    elevation: 2, // Tạo hiệu ứng đổ bóng (chỉ dành cho Android)
+    shadowColor: '#000', // Tạo hiệu ứng đổ bóng (chỉ dành cho iOS)
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   storeImage: {
     width: 80,
