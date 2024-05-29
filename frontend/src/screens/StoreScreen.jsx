@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { getStores } from '../services/services';
 
 
 function StoreScreen() {
@@ -24,10 +25,20 @@ function StoreScreen() {
     },
     // ...Thêm các nhà hàng khác vào đây
   ];
-  const [stores, setStores] = useState(mockStores); // Dữ liệu nhà hàng (lấy từ API)
+  const [stores, setStores] = useState([]); // Dữ liệu nhà hàng (lấy từ API)
 
   useEffect(() => {
-    // Fetch store data from your API here
+    const fetchStores = async () => {
+      try {
+        const storesData = await getStores();
+        setStores(storesData);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách cửa hàng:', error);
+        // Hiển thị thông báo lỗi cho người dùng
+      }
+    };
+  
+    fetchStores();
   }, []);
 
   const handleStorePress = async (storeid) => {
